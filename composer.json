@@ -3,6 +3,16 @@
     "name": "deplox/laravel-support",
     "type": "library",
     "description": "Opinionated support for Laravel projects.",
+    "keywords": [
+        "laravel",
+        "eloquent",
+        "traits",
+        "concerns",
+        "validation",
+        "password-reset",
+        "single-table-inheritance",
+        "support"
+    ],
     "license": "MIT",
     "authors": [
         {

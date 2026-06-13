@@ -1,0 +1,14 @@
+* text=auto eol=lf
+
+# Export-ignore: these paths are stripped from `composer install` dist downloads.
+# Consumers receive only src/, resources/, LICENSE, README.md, CHANGELOG.md, and composer.json.
+
+/.claude            export-ignore
+/.github            export-ignore
+/docs               export-ignore
+/graphify-out       export-ignore
+/tests              export-ignore
+CLAUDE.md           export-ignore
+CONTRIBUTING.md     export-ignore
+phpstan.neon        export-ignore
+phpunit.xml         export-ignore
