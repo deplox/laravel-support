@@ -12,38 +12,23 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class ExistsEloquent implements ValidationRule
 {
-    /**
-     * Closure that can extend the eloquent builder.
-     */
-    private ?Closure $builderClosure;
+    private ?Closure $builderClosure = null;
 
-    /**
-     * Custom validation message.
-     */
     private ?string $customMessage = null;
 
-    /**
-     * Custom translation key for message.
-     */
     private ?string $customMessageTranslationKey = null;
 
     /**
-     * Create a new rule instance.
+     * @param class-string<\Illuminate\Database\Eloquent\Model> $model
      */
-    public function __construct(/**
-     * Class name of model.
-     */
-    private readonly string $model, /**
-     * Relevant key in the model.
-     */
-    private readonly ?string $key = null, ?Closure $builderClosure = null)
-    {
-        $this->setBuilderClosure($builderClosure);
+    public function __construct(
+        private readonly string $model,
+        private readonly ?string $key = null,
+        ?Closure $builderClosure = null,
+    ) {
+        $this->builderClosure = $builderClosure;
     }
 
-    /**
-     * Set a custom validation message.
-     */
     public function withMessage(string $message): self
     {
         $this->customMessage = $message;
@@ -51,9 +36,6 @@ final class ExistsEloquent implements ValidationRule
         return $this;
     }
 
-    /**
-     * Set a translated custom validation message.
-     */
     public function withCustomTranslation(string $translationKey): self
     {
         $this->customMessageTranslationKey = $translationKey;
@@ -67,9 +49,8 @@ final class ExistsEloquent implements ValidationRule
         $modelKeyName = $builder->getKeyName();
         $builder = $builder->where($this->key ?? $modelKeyName, $value);
 
-        if ($this->builderClosure instanceof \Closure) {
-            $builderClosure = $this->builderClosure;
-            $builder = $builderClosure($builder);
+        if ($this->builderClosure !== null) {
+            $builder = ($this->builderClosure)($builder);
         }
 
         if ($builder->doesntExist()) {
@@ -85,9 +66,6 @@ final class ExistsEloquent implements ValidationRule
         }
     }
 
-    /**
-     * Set a closure that can extend the eloquent builder.
-     */
     public function setBuilderClosure(?Closure $builderClosure): void
     {
         $this->builderClosure = $builderClosure;
@@ -95,7 +73,7 @@ final class ExistsEloquent implements ValidationRule
 
     public function query(Closure $builderClosure): self
     {
-        $this->setBuilderClosure($builderClosure);
+        $this->builderClosure = $builderClosure;
 
         return $this;
     }

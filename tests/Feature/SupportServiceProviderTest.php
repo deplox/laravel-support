@@ -20,3 +20,7 @@ test('translations are publishable under the laravel-support-translations tag', 
 
     expect($paths)->not->toBeEmpty();
 });
+
+test('route:show command is registered by the service provider', function (): void {
+    expect(Artisan::all())->toHaveKey('route:show');
+});

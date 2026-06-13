@@ -6,8 +6,10 @@ namespace Deplox\Support\Commands;
 
 use Closure;
 use Illuminate\Console\Command;
+use Illuminate\Routing\RedirectController;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Routing\ViewController;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -22,14 +24,10 @@ final class RouteShowCommand extends Command
 
     protected $description = 'Show all registered routes';
 
-    /**
-     * The table headers for the command.
-     */
+    /** @var list<string> */
     private array $headers = ['Domain', 'Method', 'URI', 'Name', 'Action', 'Middleware'];
 
-    /**
-     * The verb colors for the command.
-     */
+    /** @var array<string, string> */
     private array $verbColors = [
         'ANY' => 'red',
         'GET' => 'blue',
@@ -41,38 +39,29 @@ final class RouteShowCommand extends Command
         'DELETE' => 'red',
     ];
 
-    /**
-     * Create a new route command instance.
-     *
-     * @return void
-     */
-    public function __construct(/**
-     * The router instance.
-     */
-    private readonly Router $router)
+    public function __construct(private readonly Router $router)
     {
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         $this->router->flushMiddlewareGroups();
 
-        $routes = collect($this->router->getRoutes());
+        $routes = collect($this->router->getRoutes()->getRoutes());
 
         if ($routes->isEmpty()) {
-            return $this->components->error("Your application doesn't have any routes.");
+            $this->components->error("Your application doesn't have any routes.");
+
+            return;
         }
 
         $routes = $this->compileRoutes($routes);
 
         if ($routes->isEmpty()) {
-            return $this->components->error("Your application doesn't have any routes matching the given criteria.");
+            $this->components->error("Your application doesn't have any routes matching the given criteria.");
+
+            return;
         }
 
         $this->option('json')
@@ -81,29 +70,55 @@ final class RouteShowCommand extends Command
     }
 
     /**
-     * Compile the routes into a displayable format.
+     * @param Collection<int, Route> $routes
+     * @return Collection<int, array<string, mixed>>
      */
     private function compileRoutes(Collection $routes): Collection
     {
-        $routes = $this->filterRoutes($routes);
-
-        $routes = $this->sortRoutes($routes);
-
-        $routes = $this->pluckColumns($routes);
-
-        return $routes;
+        return $this->pluckColumns($this->sortRoutes($this->filterRoutes($routes)));
     }
 
     /**
-     * Filter the route by URI and / or name.
+     * @param array<string, mixed> $route
      */
     private function shouldIncludeRoute(array $route): bool
     {
-        return !($this->option('name') && ! Str::contains((string) $route['name'], $this->option('name')) || $this->option('uri') && ! Str::contains($route['uri'], $this->option('uri')) || $this->option('method') && ! Str::contains($route['method'], mb_strtoupper($this->option('method'))) || $this->option('domain') && ! Str::contains((string) $route['domain'], $this->option('domain')) || ! $this->option('vendor') && $route['vendor']);
+        $name = $this->stringOption('name');
+        if ($name !== null && ! Str::contains((string) $route['name'], $name)) {
+            return false;
+        }
+
+        $uri = $this->stringOption('uri');
+        if ($uri !== null && ! Str::contains((string) $route['uri'], $uri)) {
+            return false;
+        }
+
+        $method = $this->stringOption('method');
+        if ($method !== null && ! Str::contains((string) $route['method'], mb_strtoupper($method))) {
+            return false;
+        }
+
+        $domain = $this->stringOption('domain');
+        if ($domain !== null && ! Str::contains((string) $route['domain'], $domain)) {
+            return false;
+        }
+
+        if (! $this->option('vendor') && $route['vendor']) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function stringOption(string $name): ?string
+    {
+        $value = $this->option($name);
+
+        return is_string($value) ? $value : null;
     }
 
     /**
-     * Get the route information.
+     * @return array<string, mixed>
      */
     private function getRouteInformation(Route $route): array
     {
@@ -119,54 +134,57 @@ final class RouteShowCommand extends Command
     }
 
     /**
-     * Filter routes using the provided options.
+     * @param Collection<int, Route> $routes
+     * @return Collection<int, array<string, mixed>>
      */
     private function filterRoutes(Collection $routes): Collection
     {
-        return $routes->map(fn(Route $route): array => $this->getRouteInformation($route))->filter(fn($route): bool => $this->shouldIncludeRoute($route));
+        return $routes
+            ->map(fn (Route $route): array => $this->getRouteInformation($route))
+            ->filter(fn (array $route): bool => $this->shouldIncludeRoute($route))
+            ->values();
     }
 
     /**
-     * Sort routes by a given element.
+     * @param Collection<int, array<string, mixed>> $routes
+     * @return Collection<int, array<string, mixed>>
      */
     private function sortRoutes(Collection $routes): Collection
     {
-        $column = $this->option('sort') ?? 'uri';
+        $sort = $this->stringOption('sort') ?? 'uri';
+        $reverse = (bool) $this->option('reverse');
 
-        $options = SORT_NATURAL;
+        if ($sort === 'middleware') {
+            $sorted = $routes->sortBy(static function (array $route): string {
+                $middleware = (array) $route['middleware'];
+                asort($middleware);
 
-        if ($column === 'middleware') {
-            $column = function (array $route, int $key): string {
-                asort($route['middleware']);
-
-                return implode(',', $route['middleware']);
-            };
-
-            $options = SORT_NUMERIC;
+                return implode(',', $middleware);
+            }, SORT_NUMERIC);
+        } else {
+            $sorted = $routes->sortBy($sort, SORT_NATURAL);
         }
 
-        $routes = $routes->sortBy($column, $options);
-
-        if ((bool) $this->option('reverse')) {
-            return $routes->reverse();
-        }
-
-        return $routes;
+        return $reverse ? $sorted->reverse()->values() : $sorted->values();
     }
 
     /**
-     * Remove unnecessary columns from routes.
+     * @param Collection<int, array<string, mixed>> $routes
+     * @return Collection<int, array<string, mixed>>
      */
     private function pluckColumns(Collection $routes): Collection
     {
         $columns = $this->getColumns();
 
-        return $routes->map(fn($route) => Arr::only($route, $columns));
+        return $routes->map(
+            fn (array $route): array => array_filter(
+                $route,
+                static fn (string $key): bool => in_array($key, $columns, true),
+                ARRAY_FILTER_USE_KEY
+            )
+        )->values();
     }
 
-    /**
-     * Get the action for the route.
-     */
     private function getAction(Route $route): string
     {
         $action = $route->getActionMethod();
@@ -174,8 +192,8 @@ final class RouteShowCommand extends Command
 
         if ($action === $controller) {
             return match ($controller) {
-                \Illuminate\Routing\RedirectController::class => 'Redirect',
-                \Illuminate\Routing\ViewController::class => 'View',
+                RedirectController::class => 'Redirect',
+                ViewController::class => 'View',
                 default => 'Invokable',
             };
         }
@@ -184,31 +202,30 @@ final class RouteShowCommand extends Command
     }
 
     /**
-     * Get the middleware for the route.
+     * @return array<int, string>
      */
     private function getMiddleware(Route $route, bool $useShortHand = true): array
     {
         $map = array_flip($this->router->getMiddleware());
 
-        return collect($this->router->gatherRouteMiddleware($route))->map(function ($middleware) use ($map, $useShortHand) {
-            $middleware = $middleware instanceof Closure ? 'Closure' : $middleware;
+        return collect($this->router->gatherRouteMiddleware($route))
+            ->map(function (mixed $middleware) use ($map, $useShortHand): string {
+                $middleware = $middleware instanceof Closure ? 'Closure' : (string) $middleware;
 
-            // show the middleware short-hand name
-            if ($useShortHand) {
-                $key = Str::before($middleware, ':');
+                if ($useShortHand) {
+                    $key = Str::before($middleware, ':');
 
-                if (Arr::exists($map, $key)) {
-                    $middleware = Str::replace($key, $map[$key], $middleware);
+                    if (Arr::exists($map, $key)) {
+                        $middleware = Str::replace($key, $map[$key], $middleware);
+                    }
                 }
-            }
 
-            return $middleware;
-        })->all();
+                return $middleware;
+            })
+            ->values()
+            ->all();
     }
 
-    /**
-     * Determine if the route has been defined outside of the application.
-     */
     private function isVendorRoute(Route $route): bool
     {
         if ($route->action['uses'] instanceof Closure) {
@@ -220,134 +237,102 @@ final class RouteShowCommand extends Command
                 return false;
             }
 
-            $path = new ReflectionClass($route->getControllerClass())->getFileName();
+            $controllerClass = $route->getControllerClass();
+
+            if ($controllerClass === null || ! class_exists($controllerClass)) {
+                return false;
+            }
+
+            $path = new ReflectionClass($controllerClass)->getFileName();
         } else {
             return false;
         }
 
-        return str_starts_with($path, $this->laravel->basePath('vendor'));
+        return is_string($path) && str_starts_with($path, $this->laravel->basePath('vendor'));
     }
 
-    /**
-     * Determine if the route uses a framework controller.
-     */
     private function isFrameworkController(Route $route): bool
     {
-        return in_array($route->getControllerClass(), [\Illuminate\Routing\RedirectController::class, \Illuminate\Routing\ViewController::class], true);
+        return in_array($route->getControllerClass(), [RedirectController::class, ViewController::class], true);
     }
 
-    /**
-     * Get the table headers for the visible columns.
-     */
-    private function getHeaders(): array
-    {
-        return Arr::only($this->headers, array_keys($this->getColumns()));
-    }
-
-    /**
-     * Get the column names to show (lowercase table headers).
-     */
+    /** @return list<string> */
     private function getColumns(): array
     {
         return array_map('strtolower', $this->headers);
     }
 
-    /**
-     * Parse the column list.
-     */
-    private function parseColumns(array $columns): array
-    {
-        $results = [];
-
-        foreach ($columns as $column) {
-            if (str_contains((string) $column, ',')) {
-                $results = array_merge($results, explode(',', (string) $column));
-            } else {
-                $results[] = $column;
-            }
-        }
-
-        return array_map('strtolower', $results);
-    }
-
+    /** @param Collection<int, array<string, mixed>> $routes */
     private function forJson(Collection $routes): void
     {
         $this->line($routes->values()->toJson());
     }
 
-    /**
-     * Convert the given routes to table.
-     */
+    /** @param Collection<int, array<string, mixed>> $routes */
     private function forTable(Collection $routes): void
     {
         $table = new Table($this->output);
 
-        $headers = ['Method', 'URI', 'Name', 'Action', 'Middleware'];
+        $table->setHeaders(['Method', 'URI', 'Name', 'Action', 'Middleware']);
 
-        $table->setHeaders($headers);
-
-        $rows = $routes->map(function (array $route): array {
-            $method = $this->formatMethod($route);
-            $uri = $this->formatUri($route);
-            $action = $this->formatAction($route);
-
-            return [
-                'method' => $method,
-                'uri' => $uri,
-                'name' => $route['name'],
-                'action' => $action,
-                'middleware' => implode(', ', $route['middleware']),
-            ];
-        })->all();
+        $rows = $routes->map(fn (array $route): array => [
+            'method' => $this->formatMethod($route),
+            'uri' => $this->formatUri($route),
+            'name' => $route['name'],
+            'action' => $this->formatAction($route),
+            'middleware' => implode(', ', (array) $route['middleware']),
+        ])->all();
 
         $table->setRows($rows);
-
         $table->render();
     }
 
-    private function formatMethod(array $route): ?string
+    /** @param array<string, mixed> $route */
+    private function formatMethod(array $route): string
     {
-        return Str::of($route['method'])->explode('|')->map(fn($method): string => sprintf('<fg=%s>%s</>', $this->verbColors[$method] ?? 'default', $method))->implode('<fg=#6C7280>|</>');
+        return Str::of((string) $route['method'])
+            ->explode('|')
+            ->map(fn (string $method): string => sprintf('<fg=%s>%s</>', $this->verbColors[$method] ?? 'default', $method))
+            ->implode('<fg=#6C7280>|</>');
     }
 
-    private function formatUri(array $route): ?string
+    /** @param array<string, mixed> $route */
+    private function formatUri(array $route): string
     {
-        $uri = $route['uri'];
+        $uri = (string) $route['uri'];
 
         if ($route['domain']) {
             $uri = $route['domain'].'/'.mb_ltrim($uri, '/');
         }
 
-        return preg_replace('#({[^}]+})#', '<fg=yellow>$1</>', (string) $uri);
+        return (string) preg_replace('#({[^}]+})#', '<fg=yellow>$1</>', $uri);
     }
 
-    private function formatAction(array $route): ?string
+    /** @param array<string, mixed> $route */
+    private function formatAction(array $route): string
     {
-        $action = $route['action'];
+        $action = (string) $route['action'];
 
-        if (in_array($action, ['Closure', 'Invokable', 'View', 'Redirect'])) {
+        if (in_array($action, ['Closure', 'Invokable', 'View', 'Redirect'], true)) {
             return "<fg=yellow>{$action}</>";
         }
 
         return $action;
     }
 
-    /**
-     * Get the console command options.
-     */
     protected function getOptions(): array
     {
         $columns = implode(', ', $this->getColumns());
 
         return [
-            ['json', null, InputOption::VALUE_NONE, 'Output routes as JSON'],
-            ['domain', null, InputOption::VALUE_OPTIONAL, 'Filter routes by domain'],
-            ['method', null, InputOption::VALUE_OPTIONAL, 'Filter routes by method'],
-            ['name', null, InputOption::VALUE_OPTIONAL, 'Filter routes by name'],
-            ['uri', null, InputOption::VALUE_OPTIONAL, 'Filter routes by uri'],
-            ['sort', null, InputOption::VALUE_OPTIONAL, 'Sort routes by column ('.$columns.') in descending order', 'uri'],
-            ['reverse', null, InputOption::VALUE_NONE, 'Reverse the sort order of the routes'],
-            ['vendor', null, InputOption::VALUE_NONE, 'Include routes defined by vendor packages'],
+            new InputOption('json', null, InputOption::VALUE_NONE, 'Output routes as JSON'),
+            new InputOption('domain', null, InputOption::VALUE_OPTIONAL, 'Filter routes by domain'),
+            new InputOption('method', null, InputOption::VALUE_OPTIONAL, 'Filter routes by method'),
+            new InputOption('name', null, InputOption::VALUE_OPTIONAL, 'Filter routes by name'),
+            new InputOption('uri', null, InputOption::VALUE_OPTIONAL, 'Filter routes by uri'),
+            new InputOption('sort', null, InputOption::VALUE_OPTIONAL, 'Sort routes by column ('.$columns.')', 'uri'),
+            new InputOption('reverse', null, InputOption::VALUE_NONE, 'Reverse the sort order of the routes'),
+            new InputOption('vendor', null, InputOption::VALUE_NONE, 'Include routes defined by vendor packages'),
         ];
     }
 }

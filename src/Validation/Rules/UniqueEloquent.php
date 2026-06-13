@@ -12,37 +12,25 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 final class UniqueEloquent implements ValidationRule
 {
-    /**
-     * Closure that can extend the eloquent builder
-     */
-    private ?Closure $builderClosure;
+    private ?Closure $builderClosure = null;
 
     private mixed $ignoreId = null;
 
     private ?string $ignoreColumn = null;
 
-    /**
-     * Custom validation message.
-     */
     private ?string $customMessage = null;
 
-    /**
-     * Translation key for custom validation message.
-     */
     private ?string $customMessageTranslationKey = null;
 
     /**
-     * UniqueEloquent constructor.
+     * @param class-string<\Illuminate\Database\Eloquent\Model> $model
      */
-    public function __construct(/**
-     * Class name of model.
-     */
-    private readonly string $model, /**
-     * Relevant key in the model.
-     */
-    private readonly ?string $key = null, ?Closure $builderClosure = null)
-    {
-        $this->setBuilderClosure($builderClosure);
+    public function __construct(
+        private readonly string $model,
+        private readonly ?string $key = null,
+        ?Closure $builderClosure = null,
+    ) {
+        $this->builderClosure = $builderClosure;
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -51,9 +39,8 @@ final class UniqueEloquent implements ValidationRule
         $modelKeyName = $builder->getKeyName();
         $builder = $builder->where($this->key ?? $modelKeyName, $value);
 
-        if ($this->builderClosure instanceof \Closure) {
-            $builderClosure = $this->builderClosure;
-            $builder = $builderClosure($builder);
+        if ($this->builderClosure !== null) {
+            $builder = ($this->builderClosure)($builder);
         }
 
         if ($this->ignoreId !== null) {
@@ -77,9 +64,6 @@ final class UniqueEloquent implements ValidationRule
         }
     }
 
-    /**
-     * Set a custom validation message.
-     */
     public function withMessage(string $message): self
     {
         $this->customMessage = $message;
@@ -87,9 +71,6 @@ final class UniqueEloquent implements ValidationRule
         return $this;
     }
 
-    /**
-     * Set a translated custom validation message.
-     */
     public function withCustomTranslation(string $translationKey): self
     {
         $this->customMessageTranslationKey = $translationKey;
@@ -97,9 +78,6 @@ final class UniqueEloquent implements ValidationRule
         return $this;
     }
 
-    /**
-     * Set a closure that can extend the eloquent builder.
-     */
     public function setBuilderClosure(?Closure $builderClosure): void
     {
         $this->builderClosure = $builderClosure;
@@ -107,7 +85,7 @@ final class UniqueEloquent implements ValidationRule
 
     public function query(Closure $builderClosure): self
     {
-        $this->setBuilderClosure($builderClosure);
+        $this->builderClosure = $builderClosure;
 
         return $this;
     }
@@ -120,7 +98,8 @@ final class UniqueEloquent implements ValidationRule
 
     public function ignore(mixed $id, ?string $column = null): self
     {
-        $this->setIgnore($id, $column);
+        $this->ignoreId = $id;
+        $this->ignoreColumn = $column;
 
         return $this;
     }
