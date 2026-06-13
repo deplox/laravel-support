@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Deplox\Support\Database\Eloquent\Concerns;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
-use UnitEnum;
 
 /**
  * Inspired by https://github.com/tighten/parental
@@ -50,15 +50,15 @@ trait HasChildren
     /**
      * Create a new instance of the given model.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  bool  $exists
      * @return static
      */
-    public function newInstance($attributes = [], $exists = false): self
+    public function newInstance($attributes = [], $exists = false): static
     {
         $model = isset($attributes[$this->getInheritanceColumn()])
             ? $this->getChildModel($attributes)
-            : new static(((array) $attributes));
+            : new static((array) $attributes);
 
         $model->exists = $exists;
 
@@ -72,11 +72,11 @@ trait HasChildren
     /**
      * Create a new model instance that is existing.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  string|null  $connection
      * @return static
      */
-    public function newFromBuilder($attributes = [], $connection = null): self
+    public function newFromBuilder($attributes = [], $connection = null): static
     {
         $attributes = (array) $attributes;
 
@@ -101,16 +101,23 @@ trait HasChildren
     /**
      * Define an inverse one-to-one or many relationship.
      *
-     * @param  string  $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @param  class-string<TRelatedModel>  $related
      * @param  string|null  $foreignKey
      * @param  string|null  $ownerKey
      * @param  string|null  $relation
+     * @return BelongsTo<TRelatedModel, $this>
      */
     public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null): BelongsTo
     {
         $instance = $this->newRelatedInstance($related);
 
-        if (is_null($foreignKey) && method_exists($instance, 'hasParent') && $instance->hasParent()) {
+        if (
+            is_null($foreignKey)
+            && method_exists($instance, 'hasParent')
+            && $instance->hasParent()
+            && method_exists($instance, 'getClassNameForRelationships')
+        ) {
             $foreignKey = Str::snake($instance->getClassNameForRelationships()).'_'.$instance->getKeyName();
         }
 
@@ -124,9 +131,11 @@ trait HasChildren
     /**
      * Define a one-to-many relationship.
      *
-     * @param  string  $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @param  class-string<TRelatedModel>  $related
      * @param  string|null  $foreignKey
      * @param  string|null  $localKey
+     * @return HasMany<TRelatedModel, $this>
      */
     public function hasMany($related, $foreignKey = null, $localKey = null): HasMany
     {
@@ -136,13 +145,15 @@ trait HasChildren
     /**
      * Define a many-to-many relationship.
      *
-     * @param  string  $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @param  class-string<TRelatedModel>  $related
      * @param  string|null  $table
      * @param  string|null  $foreignPivotKey
      * @param  string|null  $relatedPivotKey
      * @param  string|null  $parentKey
      * @param  string|null  $relatedKey
      * @param  string|null  $relation
+     * @return BelongsToMany<TRelatedModel, $this>
      */
     public function belongsToMany(
         $related,
@@ -155,7 +166,12 @@ trait HasChildren
     ): BelongsToMany {
         $instance = $this->newRelatedInstance($related);
 
-        if (is_null($table) && method_exists($instance, 'hasParent') && $instance->hasParent()) {
+        if (
+            is_null($table)
+            && method_exists($instance, 'hasParent')
+            && $instance->hasParent()
+            && method_exists($instance, 'getClassNameForRelationships')
+        ) {
             $table = $this->joiningTable($instance->getClassNameForRelationships());
         }
 
@@ -188,7 +204,7 @@ trait HasChildren
         $childTypes = $this->getChildTypes();
 
         // Handling Enum casting for `type` column
-        if ($aliasOrClass instanceof UnitEnum) {
+        if ($aliasOrClass instanceof BackedEnum) {
             $aliasOrClass = $aliasOrClass->value;
         }
 
@@ -198,24 +214,22 @@ trait HasChildren
     public function classToAlias(string $className): string
     {
         $childTypes = $this->getChildTypes();
+        $key = array_search($className, $childTypes, true);
 
-        if (in_array($className, $childTypes)) {
-            return array_search($className, $childTypes);
-        }
-
-        return $className;
+        return $key !== false ? $key : $className;
     }
 
+    /** @return array<string, class-string<\Illuminate\Database\Eloquent\Model>> */
     public function getChildTypes(): array
     {
-        return property_exists($this, 'childTypes') ? $this->childTypes : [];
+        return $this->childTypes ?: [];
     }
 
     /**
      * Register a model event with the dispatcher.
      *
      * @param  string  $event
-     * @param  Closure|string  $callback
+     * @param  (callable(): mixed)|class-string|\Illuminate\Events\QueuedClosure  $callback
      */
     protected static function registerModelEvent($event, $callback): void
     {
@@ -242,6 +256,7 @@ trait HasChildren
     }
 
     /**
+     * @param  array<string, mixed>  $attributes
      * @return mixed
      */
     protected function getChildModel(array $attributes)

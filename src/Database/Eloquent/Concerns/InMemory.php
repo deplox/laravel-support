@@ -6,6 +6,7 @@ namespace Deplox\Support\Database\Eloquent\Concerns;
 
 use Closure;
 use DateTimeImmutable;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\App;
@@ -21,7 +22,7 @@ use ReflectionClass;
  */
 trait InMemory
 {
-    protected static $sushiConnection;
+    protected static ?Connection $sushiConnection = null;
 
     /**
      * Per-class pending migration state, populated during boot and consumed on
@@ -45,8 +46,8 @@ trait InMemory
         File::ensureDirectoryExists($cacheDirectory);
 
         $cachePath = $cacheDirectory.DIRECTORY_SEPARATOR.$cacheFileName;
-        $dataPath = new ReflectionClass(static::class)->getFileName();
-        $shouldCache = property_exists(static::class, 'rows');
+        $dataPath = static::sushiCacheReferencePath();
+        $shouldCache = static::sushiShouldCache();
 
         // no-caching-capabilities
         if (! $shouldCache) {
@@ -65,7 +66,7 @@ trait InMemory
         }
     }
 
-    public static function resolveConnection($connection = null)
+    public static function resolveConnection($connection = null): Connection
     {
         // Run any deferred migration on the first connection resolve. Unset
         // the entry before calling migrate() so the recursive resolveConnection
@@ -81,7 +82,7 @@ trait InMemory
             }
         }
 
-        return static::$sushiConnection;
+        return static::$sushiConnection ?? throw new \LogicException(static::class.' has no SQLite connection — bootInMemory() was not called.');
     }
 
     public function getConnectionName(): string
@@ -89,12 +90,14 @@ trait InMemory
         return static::class;
     }
 
-    public function getRows()
+    /** @return array<int, array<string, mixed>> */
+    public function getRows(): array
     {
         return $this->rows;
     }
 
-    public function getSchema()
+    /** @return array<string, string> */
+    public function getSchema(): array
     {
         return $this->schema ?? [];
     }
@@ -110,14 +113,13 @@ trait InMemory
             $this->createTableWithNoData($tableName);
         }
 
-        foreach (array_chunk($rows, 100) ?? [] as $inserts) {
-            if (! empty($inserts)) {
-                static::insert($inserts);
-            }
+        foreach (array_chunk($rows, 100) as $inserts) {
+            static::insert($inserts);
         }
     }
 
-    public function createTable(string $tableName, $firstRow): void
+    /** @param array<string, mixed> $firstRow */
+    public function createTable(string $tableName, array $firstRow): void
     {
         $this->createTableSafely($tableName, function ($table) use ($firstRow): void {
             // Add the "id" column if it doesn't already exist in the rows.
@@ -178,7 +180,7 @@ trait InMemory
         });
     }
 
-    protected static function setSqliteConnection($database)
+    protected static function setSqliteConnection(string $database): void
     {
         $config = ['driver' => 'sqlite', 'database' => $database];
 
@@ -187,17 +189,17 @@ trait InMemory
         Config::set('database.connections.'.static::class, $config);
     }
 
-    protected function sushiCacheReferencePath()
+    protected static function sushiCacheReferencePath(): string
     {
-        return new ReflectionClass(static::class)->getFileName();
+        return (string) (new ReflectionClass(static::class))->getFileName();
     }
 
-    protected function sushiShouldCache(): bool
+    protected static function sushiShouldCache(): bool
     {
         return property_exists(static::class, 'rows');
     }
 
-    protected function createTableSafely(string $tableName, Closure $callback)
+    protected function createTableSafely(string $tableName, Closure $callback): void
     {
         /** @var \Illuminate\Database\Schema\SQLiteBuilder $schemaBuilder */
         $schemaBuilder = static::resolveConnection()->getSchemaBuilder();

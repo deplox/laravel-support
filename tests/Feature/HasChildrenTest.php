@@ -81,3 +81,29 @@ test('parentIsBooting returns false after parent has fully booted', function ():
 
     expect($reflection->invoke(null))->toBeFalse();
 });
+
+// HasParent-specific behaviour
+
+test('HasParent: getTable() uses the parent class name', function (): void {
+    expect((new Dog)->getTable())->toBe('animals');
+});
+
+test('HasParent: getForeignKey() returns snake-case parent class name + primary key', function (): void {
+    expect((new Dog)->getForeignKey())->toBe('animal_id');
+});
+
+test('HasParent: getMorphClass() delegates to the parent model', function (): void {
+    expect((new Dog)->getMorphClass())->toBe(Animal::class);
+});
+
+test('HasParent: getClassNameForSerialization() returns the parent class name', function (): void {
+    expect((new Dog)->getClassNameForSerialization())->toBe(Animal::class);
+});
+
+test('HasParent: hasParent() returns true', function (): void {
+    expect((new Dog)->hasParent())->toBeTrue();
+});
+
+test('HasParent: joiningTable() returns alphabetically sorted snake_case pair', function (): void {
+    expect((new Dog)->joiningTable(Cat::class))->toBe('animal_animal');
+});

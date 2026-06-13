@@ -51,7 +51,7 @@ trait HasParent
 
     public function parentHasHasChildrenTrait(): bool
     {
-        return $this->hasChildren ?? false;
+        return (bool) ($this->hasChildren ?: false);
     }
 
     /**
@@ -127,14 +127,26 @@ trait HasParent
     }
 
     /**
-     * Get the class name for Parent Class.
+     * Get the parent class name. Per-class static cache (PHP 8.1+ trait statics are bound per using-class).
      *
+     * @return class-string<\Illuminate\Database\Eloquent\Model>
      * @throws ReflectionException
      */
     protected function getParentClass(): string
     {
         static $parentClassName;
 
-        return $parentClassName ?: $parentClassName = new ReflectionClass($this)->getParentClass()->getName();
+        if ($parentClassName !== null) {
+            return $parentClassName;
+        }
+
+        $parent = (new ReflectionClass($this))->getParentClass();
+        $name = $parent !== false ? $parent->getName() : static::class;
+
+        if (! is_a($name, Model::class, true)) {
+            throw new \LogicException(static::class.' parent class must extend '.Model::class.'.');
+        }
+
+        return $parentClassName = $name;
     }
 }

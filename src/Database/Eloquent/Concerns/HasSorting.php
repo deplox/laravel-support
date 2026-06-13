@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Request;
 trait HasSorting
 {
     /**
+     * @param  Builder<static>  $query
      * @param  list<string>  $allowed
      */
     #[Scope]

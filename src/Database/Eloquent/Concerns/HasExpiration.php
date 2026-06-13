@@ -47,18 +47,21 @@ trait HasExpiration
         return $this->expires($this->fromExpiration()->addMinutes($minutes));
     }
 
+    /** @param Builder<static> $query */
     #[Scope]
     public function whereExpired(Builder $query): void
     {
         $query->whereNotNull('expires_at')->where('expires_at', '<=', now());
     }
 
+    /** @param Builder<static> $query */
     #[Scope]
     public function whereNotExpired(Builder $query): void
     {
         $query->where(fn (Builder $query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
+    /** @return Attribute<bool, bool> */
     protected function expired(): Attribute
     {
         return Attribute::make(

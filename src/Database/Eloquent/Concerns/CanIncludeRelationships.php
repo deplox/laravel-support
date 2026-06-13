@@ -16,6 +16,7 @@ trait CanIncludeRelationships
     /**
      * Scope to eager load relationships and counts requested via query parameters.
      *
+     * @param  Builder<static>  $query
      * @param  list<string>  $allowed
      * @param  list<string>  $allowedCounts
      */

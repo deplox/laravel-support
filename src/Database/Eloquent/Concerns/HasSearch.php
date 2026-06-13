@@ -24,6 +24,7 @@ trait HasSearch
      *
      * Empty allowlists or empty/missing search terms are no-ops.
      *
+     * @param  Builder<static>  $query
      * @param  list<string>  $allowed
      */
     #[Scope]

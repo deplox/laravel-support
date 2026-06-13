@@ -22,6 +22,7 @@ final class Author extends Model
 
     protected $guarded = [];
 
+    /** @return HasMany<Post, $this> */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @phpstan-consistent-constructor
  * @property-read string $id
  * @property-read string $name
  * @property-read string $type

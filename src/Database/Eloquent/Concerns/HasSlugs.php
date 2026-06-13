@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Deplox\Support\Database\Eloquent\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
@@ -18,7 +17,7 @@ trait HasSlugs
     public static function bootHasSlugs(): void
     {
         // The saving event is dispatched before creating or updating the model, even if the attributes have not changed.
-        static::saving(function (Model $model): void {
+        static::saving(static function (self $model): void {
             $model->setSluggableValues();
         });
     }

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read string $name
  * @property-read string $slug
  * @property-read ?string $author_id
- * @property-read ?\Carbon\CarbonInterface $expires_at
+ * @property ?\Carbon\CarbonInterface $expires_at
  */
 final class Post extends Model
 {
@@ -29,6 +29,7 @@ final class Post extends Model
 
     protected $guarded = [];
 
+    /** @return BelongsTo<Author, $this> */
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);
