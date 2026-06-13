@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Deplox\Support\Auth\Passwords;
 
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\PasswordBrokerFactory as PasswordBrokerFactoryContract;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application as App;
+use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Hashing\HashManager;
 use InvalidArgumentException;
 
 final class PasswordBrokerManager implements PasswordBrokerFactoryContract
 {
     /**
-     * Create a new PasswordBroker manager instance.
+     * @param array<string, PasswordBrokerContract> $brokers
      */
     public function __construct(
         private App $app,
@@ -20,12 +24,9 @@ final class PasswordBrokerManager implements PasswordBrokerFactoryContract
     ) {}
 
     /**
-     * Dynamically call the default driver instance.
-     *
-     * @param  array  $parameters
-     * @return mixed
+     * @param array<int, mixed> $parameters
      */
-    public function __call(string $method, array $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         return $this->broker()->{$method}(...$parameters);
     }
@@ -33,55 +34,52 @@ final class PasswordBrokerManager implements PasswordBrokerFactoryContract
     /**
      * Get a password broker instance by name.
      */
-    public function broker($name = null): PasswordBrokerContract
+    public function broker(mixed $name = null): PasswordBrokerContract
     {
-        $name = $name ?: $this->getDefaultDriver();
+        $brokerName = is_string($name) ? $name : $this->getDefaultDriver();
 
-        return $this->brokers[$name] ?? ($this->brokers[$name] = $this->resolve($name));
+        return $this->brokers[$brokerName] ?? ($this->brokers[$brokerName] = $this->resolve($brokerName));
     }
 
-    /**
-     * Get the default password broker name.
-     */
     public function getDefaultDriver(): string
     {
-        return $this->app->make(\Illuminate\Contracts\Config\Repository::class)->get('auth.defaults.passwords');
+        return $this->app->make(ConfigRepository::class)->get('auth.defaults.passwords');
     }
 
-    /**
-     * Set the default password broker name.
-     */
     public function setDefaultDriver(string $name): void
     {
-        $this->app['config']['auth.defaults.passwords'] = $name;
+        $this->app->make(ConfigRepository::class)->set('auth.defaults.passwords', $name);
     }
 
     /**
-     * Resolve the given broker.
-     *
      * @throws InvalidArgumentException
      */
     private function resolve(string $name): PasswordBrokerContract
     {
         $config = $this->getConfig($name);
 
-        throw_if(is_null($config), InvalidArgumentException::class, "Password resetter [{$name}] is not defined.");
+        if ($config === null) {
+            throw new InvalidArgumentException("Password resetter [{$name}] is not defined.");
+        }
 
-        // The password broker uses a token repository to validate tokens and send user
-        // password e-mails, as well as validating that password reset process as an
-        // aggregate service of sorts providing a convenient interface for resets.
-        return new PasswordBroker(
-            $this->app->make(\Illuminate\Contracts\Auth\Factory::class)->createUserProvider($config['provider'] ?? null),
-            $this->createTokenRepository($config),
-        );
+        $users = $this->app->make(AuthFactory::class)->createUserProvider($config['provider'] ?? null);
+
+        if ($users === null) {
+            throw new InvalidArgumentException("User provider for password broker [{$name}] is not configured.");
+        }
+
+        return new PasswordBroker($users, $this->createTokenRepository($config));
     }
 
-    private function createTokenRepository(array $config): \Deplox\Support\Auth\Passwords\DatabaseTokenRepository
+    /**
+     * @param array<string, mixed> $config
+     */
+    private function createTokenRepository(array $config): DatabaseTokenRepository
     {
         return new DatabaseTokenRepository(
-            $this->app->make(\Illuminate\Database\ConnectionResolverInterface::class)->connection($config['connection'] ?? null),
-            $this->app->make(\Illuminate\Hashing\HashManager::class),
-            $this->app->make(\Illuminate\Contracts\Config\Repository::class)->get('app.key'),
+            $this->app->make(ConnectionResolverInterface::class)->connection($config['connection'] ?? null),
+            $this->app->make(HashManager::class),
+            $this->app->make(ConfigRepository::class)->get('app.key'),
             $config['table'],
             $config['expire'],
             $config['throttle'] ?? 0
@@ -89,10 +87,10 @@ final class PasswordBrokerManager implements PasswordBrokerFactoryContract
     }
 
     /**
-     * Get the password broker configuration.
+     * @return array<string, mixed>|null
      */
-    private function getConfig(string $name): array
+    private function getConfig(string $name): array|null
     {
-        return $this->app->make(\Illuminate\Contracts\Config\Repository::class)->get("auth.passwords.{$name}");
+        return $this->app->make(ConfigRepository::class)->get("auth.passwords.{$name}");
     }
 }

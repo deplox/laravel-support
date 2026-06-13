@@ -25,6 +25,9 @@ final readonly class PasswordBroker implements PasswordBrokerContract
     /**
      * Send a password reset link to a user.
      */
+    /**
+     * @param array<string, mixed> $credentials
+     */
     public function sendResetLink(array $credentials, ?Closure $callback = null): string
     {
         // First we will check to see if we found a user at the given credentials and
@@ -42,7 +45,7 @@ final readonly class PasswordBroker implements PasswordBrokerContract
 
         $token = $this->createToken($user);
 
-        if ($callback instanceof \Closure) {
+        if ($callback instanceof Closure) {
             return $callback($user, $token) ?? self::RESET_LINK_SENT;
         }
 
@@ -56,6 +59,8 @@ final readonly class PasswordBroker implements PasswordBrokerContract
 
     /**
      * Reset the password for the given token.
+     *
+     * @param array<string, mixed> $credentials
      */
     public function reset(array $credentials, Closure $callback): mixed
     {
@@ -80,8 +85,7 @@ final readonly class PasswordBroker implements PasswordBrokerContract
     }
 
     /**
-     * Get the user for the given credentials.
-     *
+     * @param array<string, mixed> $credentials
      * @throws UnexpectedValueException
      */
     public function getUser(array $credentials): ?CanResetPasswordContract

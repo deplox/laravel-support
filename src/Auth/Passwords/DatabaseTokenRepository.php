@@ -10,6 +10,7 @@ use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
@@ -23,13 +24,10 @@ final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
         private int $throttle = 60
     ) {}
 
-    public function create(CanResetPasswordContract $user)
+    public function create(CanResetPasswordContract $user): string
     {
         $this->deleteExisting($user);
 
-        // We will create a new, random token for the user so that we can e-mail them
-        // a safe link to the password reset form. Then we will insert a record in
-        // the database so that we can verify the token within the actual reset.
         $token = $this->createNewToken();
 
         $this->getTable()->insert($this->getPayload($user, $token));
@@ -37,14 +35,14 @@ final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
         return $token;
     }
 
-    public function exists(CanResetPasswordContract $user, $token)
+    public function exists(CanResetPasswordContract $user, $token): bool
     {
         $record = (array) $this->getTable()->where('email', $user->getEmailForPasswordReset())->first();
 
         return $record && ! $this->tokenExpired($record['created_at']) && $this->hasher->check($token, $record['token']);
     }
 
-    public function recentlyCreatedToken(CanResetPasswordContract $user)
+    public function recentlyCreatedToken(CanResetPasswordContract $user): bool
     {
         $record = (array) $this->getTable()->where('email', $user->getEmailForPasswordReset())->first();
 
@@ -58,7 +56,7 @@ final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
 
     public function deleteExpired(): void
     {
-        $expiredAt = \Illuminate\Support\Facades\Date::now()->subSeconds($this->expires);
+        $expiredAt = Date::now()->subSeconds($this->expires);
 
         $this->getTable()->where('created_at', '<', $expiredAt)->delete();
     }
@@ -108,7 +106,7 @@ final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
             return false;
         }
 
-        return \Illuminate\Support\Facades\Date::parse($createdAt)->addSeconds($this->throttle)->isFuture();
+        return Date::parse($createdAt)->addSeconds($this->throttle)->isFuture();
     }
 
     /**
@@ -116,7 +114,7 @@ final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
      */
     private function tokenExpired(string $createdAt): bool
     {
-        return \Illuminate\Support\Facades\Date::parse($createdAt)->addSeconds($this->expires)->isPast();
+        return Date::parse($createdAt)->addSeconds($this->expires)->isPast();
     }
 
     /**
@@ -128,7 +126,7 @@ final readonly class DatabaseTokenRepository implements TokenRepositoryInterface
     }
 
     /**
-     * Build the record payload for the table.
+     * @return array{id: string, email: string, token: string, created_at: \Illuminate\Support\Carbon}
      */
     private function getPayload(CanResetPasswordContract $user, string $token): array
     {
