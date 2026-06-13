@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Deplox\Support\Concerns;
 
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
-use Illuminate\Validation\Factory as ValidationFactory;
-use Illuminate\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 
 trait HasValidation
 {
-    protected ?Validator $validator;
+    protected ?ValidatorContract $validator = null;
 
     /**
      * Run the validator's rules against its data.
      *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
      * @throws \Illuminate\Validation\ValidationException
      */
     public function validate(array $data): array
@@ -24,49 +25,31 @@ trait HasValidation
         return $this->validator->validate();
     }
 
-    /**
-     * Get validation rules to validate against.
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     */
+    /** @return array<string, mixed> */
     public function messages(): array
     {
         return [];
     }
 
-    /**
-     * Get custom attributes for validator errors.
-     */
+    /** @return array<string, mixed> */
     public function attributes(): array
     {
         return [];
     }
 
-    // public function validate(array $data, bool $throw = true): array
-    // {
-    //     $this->validator = $validator = $this->makeValidator($data);
-
-    //     if ($validator->fails()) {
-    //         throw_if($throw, $validator->getException(), $validator);
-
-    //         return $validator->errors()->toArray();
-    //     }
-
-    //     return $validator->validated();
-    // }
-
-    protected function makeValidator(array $data): Validator
+    /** @param array<string, mixed> $data */
+    protected function makeValidator(array $data): ValidatorContract
     {
         return $this->getValidationFactory()->make($data, $this->rules(), $this->messages(), $this->attributes());
     }
 
-    protected function getValidationFactory(): ValidationFactory
+    protected function getValidationFactory(): ValidationFactoryContract
     {
         return app(ValidationFactoryContract::class);
     }

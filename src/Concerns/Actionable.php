@@ -8,20 +8,24 @@ use Illuminate\Container\Container;
 
 trait Actionable
 {
-    public function __invoke(...$arguments)
+    public function __invoke(mixed ...$arguments): mixed
     {
         return $this->execute(...$arguments);
     }
 
+    /** @param array<string, mixed> $parameters */
     public static function make(array $parameters = []): static
     {
         return Container::getInstance()->make(static::class, $parameters);
     }
 
-    public static function run(...$arguments)
+    public static function run(mixed ...$arguments): mixed
     {
         return static::make()->execute(...$arguments);
     }
 
-    public function execute() {}
+    public function execute(): mixed
+    {
+        return null;
+    }
 }
