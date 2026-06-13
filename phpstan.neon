@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    phpVersion: 80400
+    level: 8
+    paths:
+        - src
+        - tests/Fixtures
+    ignoreErrors:
+        # HasSlugs uses ?? intentionally as a fallback for when $sluggable is not defined on the
+        # using class; redundant in contexts where the property is declared non-null.
+        - identifier: nullCoalesce.property
+          path: src/Database/Eloquent/Concerns/HasSlugs.php
+        # HasExpiration assigns DateTimeInterface to the $expires_at attribute; Eloquent casts it
+        # to Carbon at the model layer, so the type mismatch is harmless at runtime.
+        - identifier: assign.propertyType
+          path: src/Database/Eloquent/Concerns/HasExpiration.php

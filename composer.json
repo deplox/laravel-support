@@ -15,6 +15,7 @@
         "laravel/framework": "^13.0"
     },
     "require-dev": {
+        "larastan/larastan": "^3.0",
         "orchestra/testbench": "^11.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0"
@@ -30,7 +31,8 @@
         }
     },
     "scripts": {
-        "test": "pest"
+        "test": "pest",
+        "stan": "phpstan analyse --memory-limit=512M"
     },
     "extra": {
         "laravel": {
