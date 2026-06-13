@@ -1,0 +1,357 @@
+{
+  "/home/jona/Code/deplox/laravel-support/.claude/settings.json": {
+    "mtime": 1781289493.7544625,
+    "ast_hash": "e1073342e958ac9f00716938c8f165e3",
+    "semantic_hash": "e1073342e958ac9f00716938c8f165e3"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/settings.local.json": {
+    "mtime": 1778442096.6077945,
+    "ast_hash": "b471e90c60d9702800b3869ee4efeede",
+    "semantic_hash": "b471e90c60d9702800b3869ee4efeede"
+  },
+  "/home/jona/Code/deplox/laravel-support/composer.json": {
+    "mtime": 1778443608.402575,
+    "ast_hash": "cb6b169dfa587b205800fed60d845afb",
+    "semantic_hash": "cb6b169dfa587b205800fed60d845afb"
+  },
+  "/home/jona/Code/deplox/laravel-support/resources/lang/en/validation.php": {
+    "mtime": 1777902604.898181,
+    "ast_hash": "190e106d31c5f3604576052ea0e1104a",
+    "semantic_hash": "190e106d31c5f3604576052ea0e1104a"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Auth/Passwords/DatabaseTokenRepository.php": {
+    "mtime": 1778443379.5680478,
+    "ast_hash": "1834bda8f00388ba9fae1410c05455aa",
+    "semantic_hash": "1834bda8f00388ba9fae1410c05455aa"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Auth/Passwords/PasswordBroker.php": {
+    "mtime": 1778443375.4480934,
+    "ast_hash": "d87d69b60480e4dddf6f7d7bd15f9dbc",
+    "semantic_hash": "d87d69b60480e4dddf6f7d7bd15f9dbc"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Auth/Passwords/PasswordBrokerManager.php": {
+    "mtime": 1778443358.0322864,
+    "ast_hash": "77e7509948631c770bb12c8bc02e7963",
+    "semantic_hash": "77e7509948631c770bb12c8bc02e7963"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Auth/Passwords/PasswordResetServiceProvider.php": {
+    "mtime": 1777902604.8982818,
+    "ast_hash": "2bd00cdac1c2c4f3f637a57ed620b278",
+    "semantic_hash": "2bd00cdac1c2c4f3f637a57ed620b278"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Commands/RouteShowCommand.php": {
+    "mtime": 1778445492.0732646,
+    "ast_hash": "b2bcf70fba491cdae5df9f3e801e3859",
+    "semantic_hash": "b2bcf70fba491cdae5df9f3e801e3859"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Concerns/Actionable.php": {
+    "mtime": 1778445798.5919936,
+    "ast_hash": "65547f028f7badef724af01279830a35",
+    "semantic_hash": "65547f028f7badef724af01279830a35"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Concerns/HasDispatcher.php": {
+    "mtime": 1778442454.8491771,
+    "ast_hash": "a060f34af2b0345f4cade18f23b741ff",
+    "semantic_hash": "a060f34af2b0345f4cade18f23b741ff"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Concerns/HasValidation.php": {
+    "mtime": 1778445794.5520477,
+    "ast_hash": "5ac699223e3507ad81161ae67f74d5f7",
+    "semantic_hash": "5ac699223e3507ad81161ae67f74d5f7"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/CanIncludeRelationships.php": {
+    "mtime": 1778445382.0139046,
+    "ast_hash": "363a5f1dc7978a7060ce48357f78cca7",
+    "semantic_hash": "363a5f1dc7978a7060ce48357f78cca7"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/HasChildren.php": {
+    "mtime": 1778445918.7304037,
+    "ast_hash": "77cf74d0075a4470878a19dc2d1d2bdb",
+    "semantic_hash": "77cf74d0075a4470878a19dc2d1d2bdb"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/HasExpiration.php": {
+    "mtime": 1778445397.0236766,
+    "ast_hash": "ae76873bb1aecd8ed96be3e4d912300f",
+    "semantic_hash": "ae76873bb1aecd8ed96be3e4d912300f"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/HasParent.php": {
+    "mtime": 1778445788.0331352,
+    "ast_hash": "e69d9b4d0291f696528731905537cb63",
+    "semantic_hash": "e69d9b4d0291f696528731905537cb63"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/HasSearch.php": {
+    "mtime": 1778445390.8227706,
+    "ast_hash": "b7ab04128afdbe851dcfc23685b8c7dd",
+    "semantic_hash": "b7ab04128afdbe851dcfc23685b8c7dd"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/HasSlugs.php": {
+    "mtime": 1778445429.8361833,
+    "ast_hash": "f9a95e66d41c4cc0e972cb862cd999c8",
+    "semantic_hash": "f9a95e66d41c4cc0e972cb862cd999c8"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/HasSorting.php": {
+    "mtime": 1778445385.9168453,
+    "ast_hash": "4a4d70d042feced1413b6a5601fa5513",
+    "semantic_hash": "4a4d70d042feced1413b6a5601fa5513"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Database/Eloquent/Concerns/InMemory.php": {
+    "mtime": 1778445418.1543581,
+    "ast_hash": "e4bac53b6d4150ea5072358e021a36ea",
+    "semantic_hash": "e4bac53b6d4150ea5072358e021a36ea"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/SupportServiceProvider.php": {
+    "mtime": 1778442560.306656,
+    "ast_hash": "00e1daaab844aa9a8b509f97ae9c90c2",
+    "semantic_hash": "00e1daaab844aa9a8b509f97ae9c90c2"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Validation/Rules/ExistsEloquent.php": {
+    "mtime": 1778443588.0167913,
+    "ast_hash": "30080b38be29d8a020335b27e3b9a15b",
+    "semantic_hash": "30080b38be29d8a020335b27e3b9a15b"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Validation/Rules/StrongPassword.php": {
+    "mtime": 1777902604.8987343,
+    "ast_hash": "081fe0066dd296329d93983c7320c9ba",
+    "semantic_hash": "081fe0066dd296329d93983c7320c9ba"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Validation/Rules/UniqueEloquent.php": {
+    "mtime": 1778443591.4967544,
+    "ast_hash": "64100f1659e038db289326d08eb94f67",
+    "semantic_hash": "64100f1659e038db289326d08eb94f67"
+  },
+  "/home/jona/Code/deplox/laravel-support/src/Validation/Rules/ValidUlid.php": {
+    "mtime": 1777902604.8987343,
+    "ast_hash": "3524f7dfaefb777cde38d94af0bda471",
+    "semantic_hash": "3524f7dfaefb777cde38d94af0bda471"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/ActionableTest.php": {
+    "mtime": 1778442567.4195414,
+    "ast_hash": "b87037dcb9c9b01df997bb849859793c",
+    "semantic_hash": "b87037dcb9c9b01df997bb849859793c"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/CanIncludeRelationshipsTest.php": {
+    "mtime": 1777902604.8987982,
+    "ast_hash": "a79a857d44e87d1efe735cae25a3de24",
+    "semantic_hash": "a79a857d44e87d1efe735cae25a3de24"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/DatabaseTokenRepositoryTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "97d789ea62a84042205b68c265aca625",
+    "semantic_hash": "97d789ea62a84042205b68c265aca625"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/ExistsEloquentTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "e9a17de238a061740a298e57cdf7cc43",
+    "semantic_hash": "e9a17de238a061740a298e57cdf7cc43"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasChildrenTest.php": {
+    "mtime": 1778442593.29313,
+    "ast_hash": "900234aed819cd37a52c28895bd64889",
+    "semantic_hash": "900234aed819cd37a52c28895bd64889"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasDispatcherTest.php": {
+    "mtime": 1778442636.8044555,
+    "ast_hash": "17fdf1856eb890a4e8c592092355f670",
+    "semantic_hash": "17fdf1856eb890a4e8c592092355f670"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasExpirationTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "784ff2b9963cee987e203d6f643157a6",
+    "semantic_hash": "784ff2b9963cee987e203d6f643157a6"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasSearchTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "d929d4f5577f9eb1d9930903ab26fd8a",
+    "semantic_hash": "d929d4f5577f9eb1d9930903ab26fd8a"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasSlugsTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "4943f6485b617f9d068d217c88666d22",
+    "semantic_hash": "4943f6485b617f9d068d217c88666d22"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasSortingTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "cea9a589e44f2433c8707f2f7a8601a7",
+    "semantic_hash": "cea9a589e44f2433c8707f2f7a8601a7"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/HasValidationTest.php": {
+    "mtime": 1778442575.1154182,
+    "ast_hash": "773cc93ee0691e58604fbd1ff8982dc1",
+    "semantic_hash": "773cc93ee0691e58604fbd1ff8982dc1"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/InMemoryTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "7debe70cc5df6235f23b49a828563d10",
+    "semantic_hash": "7debe70cc5df6235f23b49a828563d10"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/PasswordBrokerTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "5fba05c6666ec819bc6ea5a7f15599c4",
+    "semantic_hash": "5fba05c6666ec819bc6ea5a7f15599c4"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/StrongPasswordRuleTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "d915d2ae9563d7e96b06212a41defb14",
+    "semantic_hash": "d915d2ae9563d7e96b06212a41defb14"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/SupportServiceProviderTest.php": {
+    "mtime": 1778442600.3780186,
+    "ast_hash": "ae9de747a73d6ee53474720c2e18784f",
+    "semantic_hash": "ae9de747a73d6ee53474720c2e18784f"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/UniqueEloquentTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "438f4cd408ac746ef35fbf8e0abb46ef",
+    "semantic_hash": "438f4cd408ac746ef35fbf8e0abb46ef"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Feature/ValidUlidRuleTest.php": {
+    "mtime": 1777902604.8988214,
+    "ast_hash": "14d25c89a903849a67957ae5bbe5463f",
+    "semantic_hash": "14d25c89a903849a67957ae5bbe5463f"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/Animal.php": {
+    "mtime": 1778445486.1603508,
+    "ast_hash": "8e578a58735293b303fa74363e0c024c",
+    "semantic_hash": "8e578a58735293b303fa74363e0c024c"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/Author.php": {
+    "mtime": 1778445803.3679295,
+    "ast_hash": "0ca5c0033616c07fcab9bf36844d17f7",
+    "semantic_hash": "0ca5c0033616c07fcab9bf36844d17f7"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/Cat.php": {
+    "mtime": 1777902604.8990614,
+    "ast_hash": "32d24ef61ac417b0a3c0d9138875d733",
+    "semantic_hash": "32d24ef61ac417b0a3c0d9138875d733"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/Country.php": {
+    "mtime": 1777902604.8990614,
+    "ast_hash": "5432a98d4663f1bd4673ef5d1c30dae7",
+    "semantic_hash": "5432a98d4663f1bd4673ef5d1c30dae7"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/CustomSluggable.php": {
+    "mtime": 1777902604.8990614,
+    "ast_hash": "e1431fa69696e8feb39a48e44ac225e1",
+    "semantic_hash": "e1431fa69696e8feb39a48e44ac225e1"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/Dog.php": {
+    "mtime": 1777902604.8990614,
+    "ast_hash": "aa979d32bf25e090cbda657e4697c90b",
+    "semantic_hash": "aa979d32bf25e090cbda657e4697c90b"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/EventEmitter.php": {
+    "mtime": 1778445499.162161,
+    "ast_hash": "63da43264ff30fe10b504c745fcd6bea",
+    "semantic_hash": "63da43264ff30fe10b504c745fcd6bea"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/GreetAction.php": {
+    "mtime": 1778445495.7272112,
+    "ast_hash": "d3a009ec7acfcd2b7900b88db99447a7",
+    "semantic_hash": "d3a009ec7acfcd2b7900b88db99447a7"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/Post.php": {
+    "mtime": 1778445806.5648868,
+    "ast_hash": "837dc8c168e4b643852d496a0e7c1a22",
+    "semantic_hash": "837dc8c168e4b643852d496a0e7c1a22"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/ResettableUser.php": {
+    "mtime": 1777902604.8990614,
+    "ast_hash": "af21a49233df1b35765bdee5a209f3da",
+    "semantic_hash": "af21a49233df1b35765bdee5a209f3da"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/SearchablePost.php": {
+    "mtime": 1778445508.2960284,
+    "ast_hash": "c222aa2f81a73fdc489fd0c3b9584d98",
+    "semantic_hash": "c222aa2f81a73fdc489fd0c3b9584d98"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/SimpleFormRequest.php": {
+    "mtime": 1778445810.7708306,
+    "ast_hash": "e2295c422756c63084bc9fc252a750b3",
+    "semantic_hash": "e2295c422756c63084bc9fc252a750b3"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Fixtures/SortablePost.php": {
+    "mtime": 1778445511.354984,
+    "ast_hash": "9ca5e5ba046148b32fcd3dc9eccc60d7",
+    "semantic_hash": "9ca5e5ba046148b32fcd3dc9eccc60d7"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/Pest.php": {
+    "mtime": 1777903422.0768936,
+    "ast_hash": "be8a2ccb17cd4d8e32eb0df198b69b37",
+    "semantic_hash": "be8a2ccb17cd4d8e32eb0df198b69b37"
+  },
+  "/home/jona/Code/deplox/laravel-support/tests/TestCase.php": {
+    "mtime": 1777903420.8189106,
+    "ast_hash": "55e5e98ef23d1288c26f111dc4608e5e",
+    "semantic_hash": "55e5e98ef23d1288c26f111dc4608e5e"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/CLAUDE.md": {
+    "mtime": 1781289493.754182,
+    "ast_hash": "db73b0edd7ffbc61ceac177130730865",
+    "semantic_hash": "db73b0edd7ffbc61ceac177130730865"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/SKILL.md": {
+    "mtime": 1781289493.7540472,
+    "ast_hash": "41f700d6535cc2f2b6b6d0a9eecc7525",
+    "semantic_hash": "41f700d6535cc2f2b6b6d0a9eecc7525"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/add-watch.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "0df0589623217ca38a12bdcabfb42f4c",
+    "semantic_hash": "0df0589623217ca38a12bdcabfb42f4c"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/exports.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "7fb1a81aca17a462db70684a324fcfb0",
+    "semantic_hash": "7fb1a81aca17a462db70684a324fcfb0"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "24808b03abfeaf5f6435bb69c0125b2c",
+    "semantic_hash": "24808b03abfeaf5f6435bb69c0125b2c"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": "cde13df085e4c492aeb7ba298a996d0d"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/hooks.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": "3f545db6ce646650bb9de588f5512a27"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/query.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "8b40ed8c9e9060fc215219a8fc964091",
+    "semantic_hash": "8b40ed8c9e9060fc215219a8fc964091"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/transcribe.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "70f6aa30d6211f3a2c7e9fc45479f50c",
+    "semantic_hash": "70f6aa30d6211f3a2c7e9fc45479f50c"
+  },
+  "/home/jona/Code/deplox/laravel-support/.claude/skills/graphify/references/update.md": {
+    "mtime": 1781282862.0,
+    "ast_hash": "0dad167a95bdb389f02fecffb60b1bc8",
+    "semantic_hash": "0dad167a95bdb389f02fecffb60b1bc8"
+  },
+  "/home/jona/Code/deplox/laravel-support/.github/workflows/tests.yml": {
+    "mtime": 1778443611.7815394,
+    "ast_hash": "f54148808c96f93f8f7f9eed4174fb9f",
+    "semantic_hash": "f54148808c96f93f8f7f9eed4174fb9f"
+  },
+  "/home/jona/Code/deplox/laravel-support/CLAUDE.md": {
+    "mtime": 1781289493.7543495,
+    "ast_hash": "82efb97a359f5c7290bf2513d14686be",
+    "semantic_hash": "82efb97a359f5c7290bf2513d14686be"
+  },
+  "/home/jona/Code/deplox/laravel-support/README.md": {
+    "mtime": 1777902604.8977568,
+    "ast_hash": "6ebac25c5ea0dd82a240bc3e33a66e73",
+    "semantic_hash": "6ebac25c5ea0dd82a240bc3e33a66e73"
+  },
+  "/home/jona/Code/deplox/laravel-support/docs/sluggable.md": {
+    "mtime": 1777902604.8977568,
+    "ast_hash": "46a760dd7099f95ea649c05ff9e8d47a",
+    "semantic_hash": "46a760dd7099f95ea649c05ff9e8d47a"
+  }
+}
