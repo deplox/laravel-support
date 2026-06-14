@@ -24,8 +24,7 @@ final readonly class PasswordBroker implements PasswordBrokerContract
 
     /**
      * Send a password reset link to a user.
-     */
-    /**
+     *
      * @param array<string, mixed> $credentials
      */
     public function sendResetLink(array $credentials, ?Closure $callback = null): string

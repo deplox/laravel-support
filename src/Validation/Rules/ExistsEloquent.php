@@ -66,11 +66,6 @@ final class ExistsEloquent implements ValidationRule
         }
     }
 
-    public function setBuilderClosure(?Closure $builderClosure): void
-    {
-        $this->builderClosure = $builderClosure;
-    }
-
     public function query(Closure $builderClosure): self
     {
         $this->builderClosure = $builderClosure;

@@ -86,3 +86,14 @@ test('withMessage replaces the default failure message', function (): void {
 
     expect($validator->errors()->first('name'))->toBe('taken');
 });
+
+test('withCustomTranslation uses a translation key for the failure message', function (): void {
+    Author::create(['name' => 'Ada']);
+
+    $rule = (new UniqueEloquent(Author::class, 'name'))->withCustomTranslation('support::validation.unique_model');
+
+    $validator = Validator::make(['name' => 'Ada'], ['name' => [$rule]]);
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->first('name'))->toContain('already exists');
+});

@@ -12,3 +12,7 @@ CLAUDE.md           export-ignore
 CONTRIBUTING.md     export-ignore
 phpstan.neon        export-ignore
 phpunit.xml         export-ignore
+vendor/* linguist-vendored
+node_modules/* linguist-vendored
+public/build/* linguist-generated
+*.blade.php linguist-language=PHP

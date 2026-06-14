@@ -78,22 +78,11 @@ final class UniqueEloquent implements ValidationRule
         return $this;
     }
 
-    public function setBuilderClosure(?Closure $builderClosure): void
-    {
-        $this->builderClosure = $builderClosure;
-    }
-
     public function query(Closure $builderClosure): self
     {
         $this->builderClosure = $builderClosure;
 
         return $this;
-    }
-
-    public function setIgnore(mixed $id, ?string $column = null): void
-    {
-        $this->ignoreId = $id;
-        $this->ignoreColumn = $column;
     }
 
     public function ignore(mixed $id, ?string $column = null): self

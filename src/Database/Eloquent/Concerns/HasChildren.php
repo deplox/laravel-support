@@ -222,7 +222,7 @@ trait HasChildren
     /** @return array<string, class-string<\Illuminate\Database\Eloquent\Model>> */
     public function getChildTypes(): array
     {
-        return $this->childTypes ?: [];
+        return $this->childTypes ?? [];
     }
 
     /**

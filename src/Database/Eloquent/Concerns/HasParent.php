@@ -82,8 +82,9 @@ trait HasParent
      */
     public function joiningTable($related, $instance = null): string
     {
-        $relatedClassName = method_exists((new $related), 'getClassNameForRelationships')
-            ? (new $related)->getClassNameForRelationships()
+        $relatedInstance = new $related;
+        $relatedClassName = method_exists($relatedInstance, 'getClassNameForRelationships')
+            ? $relatedInstance->getClassNameForRelationships()
             : class_basename($related);
 
         $models = [

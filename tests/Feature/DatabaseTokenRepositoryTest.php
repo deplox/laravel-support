@@ -116,3 +116,36 @@ test('create replaces an existing token for the same user', function (): void {
     expect(DB::table('reset_tokens')->where('email', 'a@example.com')->count())->toBe(1)
         ->and($this->repository->exists($user, $second))->toBeTrue();
 });
+
+test('getKey returns the raw key unchanged when not base64-prefixed', function (): void {
+    $repo = new DatabaseTokenRepository(
+        connection: DB::connection(),
+        hasher: Hash::driver(),
+        key: 'plain-secret-key',
+        table: 'reset_tokens',
+    );
+
+    expect($repo->getKey())->toBe('plain-secret-key');
+});
+
+test('getKey decodes a base64-prefixed key', function (): void {
+    $raw = str_repeat('x', 32);
+    $repo = new DatabaseTokenRepository(
+        connection: DB::connection(),
+        hasher: Hash::driver(),
+        key: 'base64:'.base64_encode($raw),
+        table: 'reset_tokens',
+    );
+
+    expect($repo->getKey())->toBe($raw);
+});
+
+test('getConnection returns the configured database connection', function (): void {
+    expect($this->repository->getConnection())
+        ->toBeInstanceOf(\Illuminate\Database\ConnectionInterface::class);
+});
+
+test('getHasher returns the configured hasher', function (): void {
+    expect($this->repository->getHasher())
+        ->toBeInstanceOf(\Illuminate\Contracts\Hashing\Hasher::class);
+});

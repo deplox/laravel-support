@@ -126,3 +126,8 @@ test('tokenExists matches a created token', function (): void {
     expect($this->broker->tokenExists($user, $token))->toBeTrue()
         ->and($this->broker->tokenExists($user, 'wrong'))->toBeFalse();
 });
+
+test('getRepository returns the token repository', function (): void {
+    expect($this->broker->getRepository())
+        ->toBeInstanceOf(\Illuminate\Auth\Passwords\TokenRepositoryInterface::class);
+});

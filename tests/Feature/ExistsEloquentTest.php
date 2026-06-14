@@ -79,3 +79,12 @@ test('query() chains a builder closure fluently', function (): void {
 
     expect(Validator::make(['n' => 'Ada'], ['n' => [$rule]])->fails())->toBeFalse();
 });
+
+test('withCustomTranslation uses a translation key for the failure message', function (): void {
+    $rule = (new ExistsEloquent(Author::class))->withCustomTranslation('support::validation.exists_model');
+
+    $validator = Validator::make(['author_id' => 'nonexistent'], ['author_id' => [$rule]]);
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->first('author_id'))->toContain('author');
+});

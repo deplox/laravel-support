@@ -127,6 +127,9 @@ trait InMemory
                 $table->increments($this->primaryKey);
             }
 
+            $schema = $this->getSchema();
+            $rowColumns = array_keys($firstRow);
+
             foreach ($firstRow as $column => $value) {
                 $type = match (true) {
                     is_int($value) => 'integer',
@@ -142,14 +145,12 @@ trait InMemory
                     continue;
                 }
 
-                $schema = $this->getSchema();
-
                 $type = $schema[$column] ?? $type;
 
                 $table->{$type}($column)->nullable();
             }
 
-            if ($this->usesTimestamps() && (! in_array('updated_at', array_keys($firstRow)) || ! in_array('created_at', array_keys($firstRow)))) {
+            if ($this->usesTimestamps() && ! in_array('updated_at', $rowColumns) && ! in_array('created_at', $rowColumns)) {
                 $table->timestamps();
             }
         });
@@ -174,7 +175,9 @@ trait InMemory
                 $table->{$type}($name)->nullable();
             }
 
-            if ($this->usesTimestamps() && (! in_array('updated_at', array_keys($schema)) || ! in_array('created_at', array_keys($schema)))) {
+            $schemaColumns = array_keys($schema);
+
+            if ($this->usesTimestamps() && ! in_array('updated_at', $schemaColumns) && ! in_array('created_at', $schemaColumns)) {
                 $table->timestamps();
             }
         });

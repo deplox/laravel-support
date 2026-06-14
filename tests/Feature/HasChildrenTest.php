@@ -107,3 +107,49 @@ test('HasParent: hasParent() returns true', function (): void {
 test('HasParent: joiningTable() returns alphabetically sorted snake_case pair', function (): void {
     expect((new Dog)->joiningTable(Cat::class))->toBe('animal_animal');
 });
+
+// HasChildren relationship methods
+
+test('newInstance() returns parent class instance when inheritance column is absent', function (): void {
+    $instance = (new Animal)->newInstance(['name' => 'Generic'], false);
+
+    expect($instance)->toBeInstanceOf(Animal::class);
+});
+
+test('belongsTo() auto-detects parent FK when related model uses HasParent', function (): void {
+    $relation = (new Animal)->belongsTo(Dog::class);
+
+    expect($relation->getForeignKeyName())->toBe('animal_id');
+});
+
+test('hasMany() passes through to the base Eloquent relationship', function (): void {
+    $relation = (new Animal)->hasMany(Dog::class);
+
+    expect($relation)->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+});
+
+test('belongsToMany() auto-detects joining table when related model uses HasParent', function (): void {
+    $relation = (new Animal)->belongsToMany(Cat::class);
+
+    expect($relation->getTable())->toBe('animal_animal');
+});
+
+test('getInheritanceColumn() returns custom childColumn when declared on the model', function (): void {
+    $model = new class extends Animal {
+        protected string $childColumn = 'entity_type';
+    };
+
+    expect($model->getInheritanceColumn())->toBe('entity_type');
+});
+
+test('classFromAlias() resolves a BackedEnum value to the mapped class name', function (): void {
+    enum AnimalType: string {
+        case Dog = 'dog';
+        case Cat = 'cat';
+    }
+
+    $animal = new Animal;
+
+    expect($animal->classFromAlias(AnimalType::Dog))->toBe(Dog::class)
+        ->and($animal->classFromAlias(AnimalType::Cat))->toBe(Cat::class);
+});
