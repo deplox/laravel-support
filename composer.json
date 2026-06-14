@@ -11,7 +11,9 @@
         "validation",
         "password-reset",
         "single-table-inheritance",
-        "support"
+        "support",
+        "throttler",
+        "rate-limiting"
     ],
     "license": "MIT",
     "authors": [
