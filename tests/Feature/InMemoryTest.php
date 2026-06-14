@@ -51,3 +51,28 @@ test('getSchema returns empty array when not configured', function (): void {
 test('connection name matches the model class', function (): void {
     expect((new Country)->getConnectionName())->toBe(Country::class);
 });
+
+test('schema-only model with no rows creates empty table', function (): void {
+    $model = new class extends \Illuminate\Database\Eloquent\Model {
+        use \Deplox\Support\Database\Eloquent\Concerns\InMemory;
+
+        public $timestamps = false;
+
+        protected $table = 'schema_only_items';
+
+        protected $guarded = [];
+
+        /** @var array<string, string> */
+        protected $schema = ['code' => 'string', 'label' => 'string'];
+    };
+
+    expect($model::all())->toHaveCount(0);
+});
+
+test('getRows() returns empty array when $rows property is not defined', function (): void {
+    $model = new class extends \Illuminate\Database\Eloquent\Model {
+        use \Deplox\Support\Database\Eloquent\Concerns\InMemory;
+    };
+
+    expect($model->getRows())->toBe([]);
+});

@@ -93,7 +93,7 @@ trait InMemory
     /** @return array<int, array<string, mixed>> */
     public function getRows(): array
     {
-        return $this->rows;
+        return $this->rows ?? [];
     }
 
     /** @return array<string, string> */

@@ -64,7 +64,8 @@ final class Invitation extends Model
 $invitation->expires(now()->addDays(7))->save();
 
 // Fluent additive helpers (chainable, anchored on existing expires_at or now())
-$invitation->addDays(3)->addHours(6)->save();
+// addMonths · addWeeks · addDays · addHours · addMinutes · addSeconds
+$invitation->addDays(3)->addHours(6)->addSeconds(30)->save();
 
 // Scopes
 Invitation::whereExpired()->get();      // expires_at IS NOT NULL AND expires_at <= now()
@@ -91,9 +92,8 @@ final class Post extends Model
     /** @return array<string, string> */
     public function getSluggable(): array
     {
-        return ['title' => 'slug'];           // single source → single target
-        // or: ['slug' => ['first', 'last']]  // many sources → one target (concat)
-        // or: ['slug' => 'title', 'meta_slug' => 'description']  // multiple slug columns
+        return ['title' => 'slug'];
+        // or multiple columns: ['title' => 'slug', 'description' => 'meta_slug']
     }
 }
 
@@ -518,7 +518,7 @@ php artisan route:show --vendor                # include vendor routes (excluded
 | `--vendor`             | Include vendor-package routes                            |
 | `--json`               | Output JSON (good for piping into `jq`, scripts)         |
 
-The action column is humanised: closures show as `Closure`, invokable classes as `Invokable`, view/redirect responders as `View`/`Redirect`. Middleware is expanded through the router's middleware-alias map so you see `auth:api` instead of `Illuminate\Auth\Middleware\Authenticate:api`.
+The action column is humanised: closures show as `Closure`, invokable classes as `Invokable`, view/redirect responders as `View`/`Redirect`, and regular controller routes as `ControllerName@method`. Middleware is expanded through the router's middleware-alias map so you see `auth:api` instead of `Illuminate\Auth\Middleware\Authenticate:api`.
 
 ---
 

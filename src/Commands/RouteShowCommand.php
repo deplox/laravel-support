@@ -198,6 +198,10 @@ final class RouteShowCommand extends Command
             };
         }
 
+        if ($controller !== null && $action !== 'Closure') {
+            return class_basename($controller).'@'.$action;
+        }
+
         return $action;
     }
 

@@ -6,8 +6,8 @@ namespace Deplox\Support\Database\Eloquent\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 use ReflectionClass;
-use ReflectionException;
 
 /**
  * Inspired by https://github.com/tighten/parental
@@ -16,9 +16,6 @@ use ReflectionException;
  */
 trait HasParent
 {
-    /**
-     * @throws ReflectionException
-     */
     public static function bootHasParent(): void
     {
         static::creating(function ($model): void {
@@ -51,12 +48,9 @@ trait HasParent
 
     public function parentHasHasChildrenTrait(): bool
     {
-        return (bool) ($this->hasChildren ?: false);
+        return $this->hasChildren ?? false;
     }
 
-    /**
-     * @throws ReflectionException
-     */
     public function getTable(): string
     {
         if (! isset($this->table)) {
@@ -66,9 +60,6 @@ trait HasParent
         return $this->table;
     }
 
-    /**
-     * @throws ReflectionException
-     */
     public function getForeignKey(): string
     {
         return Str::snake(class_basename($this->getParentClass())).'_'.$this->primaryKey;
@@ -77,8 +68,6 @@ trait HasParent
     /**
      * @param  string  $related
      * @param  null|Model  $instance
-     *
-     * @throws ReflectionException
      */
     public function joiningTable($related, $instance = null): string
     {
@@ -97,9 +86,6 @@ trait HasParent
         return mb_strtolower(implode('_', $models));
     }
 
-    /**
-     * @throws ReflectionException
-     */
     public function getClassNameForRelationships(): string
     {
         return class_basename($this->getParentClass());
@@ -107,8 +93,6 @@ trait HasParent
 
     /**
      * Get the class name for polymorphic relations.
-     *
-     * @throws ReflectionException
      */
     public function getMorphClass(): string
     {
@@ -118,9 +102,7 @@ trait HasParent
     }
 
     /**
-     * Get the class name for poly-type collections
-     *
-     * @throws ReflectionException
+     * Get the class name for poly-type collections.
      */
     public function getClassNameForSerialization(): string
     {
@@ -131,7 +113,6 @@ trait HasParent
      * Get the parent class name. Per-class static cache (PHP 8.1+ trait statics are bound per using-class).
      *
      * @return class-string<\Illuminate\Database\Eloquent\Model>
-     * @throws ReflectionException
      */
     protected function getParentClass(): string
     {
@@ -145,7 +126,7 @@ trait HasParent
         $name = $parent !== false ? $parent->getName() : static::class;
 
         if (! is_a($name, Model::class, true)) {
-            throw new \LogicException(static::class.' parent class must extend '.Model::class.'.');
+            throw new LogicException(static::class.' parent class must extend '.Model::class.'.');
         }
 
         return $parentClassName = $name;

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `HasExpiration::addSeconds()` — completes the duration-helper set alongside `addMonths/addWeeks/addDays/addHours/addMinutes`
+- Tests: `addSeconds()`, `parentHasHasChildrenTrait()` without `HasChildren`, `--domain` filter for `route:show`, `Controller@method` action display, schema-only `InMemory` path, `getUser()` exception for non-`CanResetPassword` users
+
+### Fixed
+- `HasParent::parentHasHasChildrenTrait()` used `?:` instead of `??`, triggering a PHP warning when `$hasChildren` is not defined on models that use `HasParent` without `HasChildren`
+- `HasParent` — removed spurious `@throws ReflectionException` annotations (unreachable since `$this` is always a valid object); replaced inline `\LogicException` with imported `LogicException`
+- `InMemory::getRows()` — added `?? []` guard so calling the method on a schema-only model (no `$rows` property) returns an empty array rather than throwing
+- `ValidUlid` — now uses `$fail('key')->translate([...])` consistent with `ExistsEloquent`/`UniqueEloquent` instead of the `__()` helper
+- `RouteShowCommand::getAction()` — now returns `ControllerName@method` for regular controller routes instead of just the bare method name, restoring controller class context
+
+### Changed
+- `docs/sluggable.md` rewritten: corrects the method name (`sluggable()` → `getSluggable()`), removes undocumented multi-source array syntax that was never implemented
+- README: removed the multi-source slug example (`['slug' => ['first', 'last']]`), documented the full duration-helper set, and updated `route:show` action column description
+
 ## [1.0.0] - 2026-06-13
 
 ### Added

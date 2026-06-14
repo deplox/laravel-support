@@ -47,6 +47,11 @@ trait HasExpiration
         return $this->expires($this->fromExpiration()->addMinutes($minutes));
     }
 
+    public function addSeconds(int $seconds): static
+    {
+        return $this->expires($this->fromExpiration()->addSeconds($seconds));
+    }
+
     /** @param Builder<static> $query */
     #[Scope]
     public function whereExpired(Builder $query): void

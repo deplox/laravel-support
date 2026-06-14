@@ -131,3 +131,17 @@ test('getRepository returns the token repository', function (): void {
     expect($this->broker->getRepository())
         ->toBeInstanceOf(\Illuminate\Auth\Passwords\TokenRepositoryInterface::class);
 });
+
+test('getUser throws UnexpectedValueException when user does not implement CanResetPassword', function (): void {
+    $provider = Mockery::mock(\Illuminate\Contracts\Auth\UserProvider::class);
+    $provider->shouldReceive('retrieveByCredentials')
+        ->once()
+        ->andReturn(new \stdClass());
+
+    $tokens = Mockery::mock(\Illuminate\Auth\Passwords\TokenRepositoryInterface::class);
+
+    $broker = new \Deplox\Support\Auth\Passwords\PasswordBroker($provider, $tokens);
+
+    expect(fn () => $broker->getUser(['email' => 'a@example.com']))
+        ->toThrow(\UnexpectedValueException::class);
+});

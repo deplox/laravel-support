@@ -153,3 +153,19 @@ test('classFromAlias() resolves a BackedEnum value to the mapped class name', fu
     expect($animal->classFromAlias(AnimalType::Dog))->toBe(Dog::class)
         ->and($animal->classFromAlias(AnimalType::Cat))->toBe(Cat::class);
 });
+
+test('classToAlias() returns input unchanged when class not in map', function (): void {
+    expect((new Animal)->classToAlias('App\\Models\\Bird'))->toBe('App\\Models\\Bird');
+});
+
+test('parentHasHasChildrenTrait() returns false when model does not use HasChildren', function (): void {
+    $model = new class extends \Illuminate\Database\Eloquent\Model {
+        use \Deplox\Support\Database\Eloquent\Concerns\HasParent;
+    };
+
+    expect($model->parentHasHasChildrenTrait())->toBeFalse();
+});
+
+test('getClassNameForRelationships() on HasParent delegates to parent class basename', function (): void {
+    expect((new Dog)->getClassNameForRelationships())->toBe('Animal');
+});

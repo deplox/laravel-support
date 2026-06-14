@@ -93,3 +93,10 @@ test('expired mutator false clears expires_at', function (): void {
 
     expect($post->expires_at)->toBeNull();
 });
+
+test('addSeconds() chains from current expiration', function (): void {
+    $base = now()->startOfMinute();
+    $post = (new Post(['name' => 'A']))->expires($base);
+
+    expect($post->addSeconds(90)->expires_at->getTimestamp())->toBe($base->copy()->addSeconds(90)->getTimestamp());
+});

@@ -66,3 +66,25 @@ test('route:show shows error when the application has no routes', function (): v
         ->expectsOutputToContain("doesn't have any routes")
         ->assertSuccessful();
 });
+
+test('route:show filters routes by domain', function (): void {
+    Route::domain('api.example.com')->get('/status', fn () => 'ok')->name('api.status');
+    Route::get('/home', fn () => 'ok')->name('web.home');
+
+    $this->artisan('route:show', ['--domain' => 'api.example.com', '--json' => true])
+        ->expectsOutputToContain('api.status')
+        ->assertSuccessful();
+});
+
+test('route:show displays Controller@method format for controller routes', function (): void {
+    $controller = new class extends \Illuminate\Routing\Controller {
+        public function index(): string { return 'ok'; }
+    };
+
+    Route::get('/items', [get_class($controller), 'index'])->name('items.index');
+
+    $output = $this->artisan('route:show', ['--json' => true, '--name' => 'items.index'])
+        ->assertSuccessful();
+
+    $output->expectsOutputToContain('@index');
+});

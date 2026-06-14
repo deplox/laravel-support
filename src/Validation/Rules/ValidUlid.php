@@ -20,7 +20,7 @@ final class ValidUlid implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || ! Str::isUlid($value)) {
-            $fail(__('support::validation.valid_ulid', ['attribute' => $attribute]));
+            $fail('support::validation.valid_ulid')->translate(['attribute' => $attribute]);
         }
     }
 }

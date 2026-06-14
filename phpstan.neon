@@ -14,6 +14,10 @@ parameters:
           path: src/Database/Eloquent/Concerns/HasSlugs.php
         - identifier: nullCoalesce.property
           path: src/Database/Eloquent/Concerns/HasChildren.php
+        - identifier: nullCoalesce.property
+          path: src/Database/Eloquent/Concerns/HasParent.php
+        - identifier: nullCoalesce.property
+          path: src/Database/Eloquent/Concerns/InMemory.php
         # HasExpiration assigns DateTimeInterface to the $expires_at attribute; Eloquent casts it
         # to Carbon at the model layer, so the type mismatch is harmless at runtime.
         - identifier: assign.propertyType
