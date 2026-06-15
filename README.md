@@ -18,6 +18,7 @@ Reusable Eloquent concerns, validation rules, and a drop-in password reset imple
 |                 | `ValidUlid`                             | Validate ULID format before hitting the database                               |
 | Auth            | `PasswordBroker` + `DatabaseTokenRepository` | Drop-in replacement for Laravel's password reset (readonly, immutable)    |
 | Generic         | `Actionable` / `HasValidation` / `HasDispatcher` | Building blocks for action / service classes                          |
+| Utilities       | `Throttler`                             | Thin, object-oriented wrapper around Laravel's `RateLimiter`                   |
 | Console         | `route:show`                            | Enhanced route listing with filters, JSON output, and middleware expansion     |
 
 ## Requirements
@@ -496,6 +497,49 @@ final class CompletePurchase
 
 ---
 
+## Utilities
+
+### `Throttler`
+
+A thin, object-oriented wrapper around Laravel's `RateLimiter`. Keeps rate-limiting logic out of controllers and actions and makes the intent explicit at the call site.
+
+```php
+use Deplox\Support\Utilities\Throttler;
+
+$throttler = new Throttler(
+    key:   "send-email:{$user->id}",
+    limit: 5,
+    wait:  60,   // seconds; also accepts DateInterval or DateTimeInterface
+);
+
+// Execute a callback only if attempts remain; returns false when rate-limited
+$result = $throttler->attempt(function () use ($user) {
+    Mail::to($user)->send(new WelcomeMail);
+    return true;
+});
+
+if ($result === false) {
+    return response()->json(['message' => 'Too many requests.'], 429);
+}
+```
+
+| Method                         | Purpose                                                       |
+| ------------------------------ | ------------------------------------------------------------- |
+| `attempt(Closure): mixed`      | Execute callback if not limited; `false` when limited         |
+| `tooManyAttempts(): bool`      | Check without consuming an attempt                            |
+| `hit(): int`                   | Increment the counter by 1                                    |
+| `increment(int): int`          | Increment by a custom amount                                  |
+| `decrement(int): int`          | Decrement by a custom amount                                  |
+| `attempts(): int`              | Current hit count                                             |
+| `remaining(): int`             | Attempts left before the limit is reached                     |
+| `availableIn(): int`           | Seconds until the window resets                               |
+| `resetAttempts(): bool`        | Zero the counter without clearing the lockout timer           |
+| `clear(): void`                | Clear hits and lockout timer entirely                         |
+
+The `wait` window accepts the same types as Laravel's `RateLimiter::attempt` — `int` seconds, `DateInterval`, or a `DateTimeInterface` expiry.
+
+---
+
 ## Console — `route:show`
 
 A more flexible alternative to Laravel's `route:list`.
@@ -583,6 +627,8 @@ src/
 │       ├── StrongPassword.php
 │       ├── UniqueEloquent.php
 │       └── ValidUlid.php
+├── Utilities/
+│   └── Throttler.php
 └── SupportServiceProvider.php
 resources/
 └── lang/
